@@ -1,0 +1,316 @@
+import { useState, useEffect, useRef } from "react";
+
+const useInView = (threshold = 0.15) => {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, inView];
+};
+
+const FadeIn = ({ children, delay = 0, className = "" }) => {
+  const [ref, inView] = useInView();
+  return (
+    <div ref={ref} className={className} style={{
+      opacity: inView ? 1 : 0,
+      transform: inView ? "translateY(0)" : "translateY(32px)",
+      transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`
+    }}>{children}</div>
+  );
+};
+
+const hours = [
+  { day: "Monday", time: "08:30 AM – 10:00 PM" },
+  { day: "Tuesday", time: "10:00 AM – 12:00 AM" },
+  { day: "Wednesday", time: "Open 24 Hours" },
+  { day: "Thursday", time: "Open 24 Hours" },
+  { day: "Friday", time: "Open 24 Hours" },
+  { day: "Saturday", time: "12:00 AM – 10:00 AM" },
+  { day: "Sunday", time: "12:00 PM – 10:00 AM" },
+];
+
+const services = [
+  { icon: "🩺", title: "General Consultations", desc: "Complete family healthcare for all ages — from infants to elderly." },
+  { icon: "🔬", title: "Diagnosis & Treatment", desc: "Accurate diagnosis using clinical expertise and timely treatment plans." },
+  { icon: "💉", title: "Minor Surgeries", desc: "Safe, minor surgical procedures by an experienced surgeon." },
+  { icon: "🤒", title: "Fever & Infections", desc: "Quick relief from viral, bacterial infections, and seasonal illnesses." },
+  { icon: "🫁", title: "Chronic Disease Care", desc: "Management of diabetes, hypertension, and other chronic conditions." },
+  { icon: "🚑", title: "Emergency Visits", desc: "Available around the clock on select days for urgent medical needs." },
+];
+
+export default function JivdaniClinic() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
+
+  return (
+    <div style={{ fontFamily: "'Georgia', serif", background: "#faf8f5", color: "#1a1a1a", overflowX: "hidden" }}>
+
+      {/* Google Fonts */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #faf8f5; }
+        html { scroll-behavior: smooth; }
+
+        .hero-bg {
+          background: linear-gradient(135deg, #0a4a3a 0%, #0d6b52 40%, #1a8a6a 70%, #0a4a3a 100%);
+          position: relative;
+          overflow: hidden;
+        }
+        .hero-bg::before {
+          content: '';
+          position: absolute; inset: 0;
+          background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .nav-link { cursor: pointer; transition: color 0.2s; }
+        .nav-link:hover { color: #1a8a6a; }
+        .btn-primary {
+          background: #0d6b52; color: white;
+          border: none; cursor: pointer;
+          font-family: 'DM Sans', sans-serif;
+          transition: background 0.2s, transform 0.15s;
+        }
+        .btn-primary:hover { background: #0a4a3a; transform: translateY(-1px); }
+        .btn-outline {
+          background: transparent; color: #0d6b52;
+          border: 2px solid #0d6b52; cursor: pointer;
+          font-family: 'DM Sans', sans-serif;
+          transition: all 0.2s;
+        }
+        .btn-outline:hover { background: #0d6b52; color: white; }
+        .service-card {
+          background: white;
+          border: 1px solid #e8e3db;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(13,107,82,0.12); }
+        .hour-row:nth-child(even) { background: #f5f2ed; }
+        .cross-icon {
+          width: 60px; height: 60px;
+          background: linear-gradient(135deg, #0d6b52, #1a8a6a);
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 28px; color: white;
+          box-shadow: 0 8px 24px rgba(13,107,82,0.3);
+        }
+        .divider {
+          width: 60px; height: 3px;
+          background: linear-gradient(90deg, #0d6b52, #1a8a6a);
+          border-radius: 2px;
+        }
+        @media (max-width: 768px) {
+          .hero-grid { flex-direction: column !important; }
+          .services-grid { grid-template-columns: 1fr !important; }
+          .hours-contact-grid { flex-direction: column !important; }
+          .nav-desktop { display: none !important; }
+        }
+        @media (min-width: 769px) {
+          .nav-mobile-btn { display: none !important; }
+        }
+      `}</style>
+
+      {/* NAV */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        background: scrolled ? "rgba(250,248,245,0.97)" : "transparent",
+        backdropFilter: scrolled ? "blur(10px)" : "none",
+        borderBottom: scrolled ? "1px solid #e8e3db" : "none",
+        transition: "all 0.3s",
+        padding: "0 5%",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        height: "68px"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="cross-icon" style={{ width: 38, height: 38, fontSize: 18 }}>✚</div>
+          <div>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: "16px", color: scrolled ? "#0a4a3a" : "white", lineHeight: 1.1 }}>Jivdani Clinic</div>
+            <div style={{ fontSize: "10px", color: scrolled ? "#666" : "rgba(255,255,255,0.7)", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.5px" }}>Dr. Amol Raut</div>
+          </div>
+        </div>
+
+        <div className="nav-desktop" style={{ display: "flex", gap: "32px", fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: scrolled ? "#333" : "rgba(255,255,255,0.9)" }}>
+          {["about","services","hours","contact"].map(s => (
+            <span key={s} className="nav-link" onClick={() => scrollTo(s)} style={{ textTransform: "capitalize", letterSpacing: "0.5px" }}>{s}</span>
+          ))}
+        </div>
+
+        <button className="nav-desktop btn-primary" onClick={() => scrollTo("contact")} style={{ padding: "10px 22px", borderRadius: "6px", fontSize: "14px" }}>
+          Book Appointment
+        </button>
+
+        <button className="nav-mobile-btn" onClick={() => setMenuOpen(!menuOpen)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "22px", color: scrolled ? "#333" : "white" }}>
+          {menuOpen ? "✕" : "☰"}
+        </button>
+      </nav>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div style={{ position: "fixed", top: 68, left: 0, right: 0, background: "white", zIndex: 99, padding: "20px", boxShadow: "0 8px 24px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "16px", fontFamily: "'DM Sans', sans-serif" }}>
+          {["about","services","hours","contact"].map(s => (
+            <span key={s} onClick={() => scrollTo(s)} style={{ cursor: "pointer", fontSize: "16px", padding: "8px 0", borderBottom: "1px solid #f0ece5", textTransform: "capitalize", color: "#333" }}>{s}</span>
+          ))}
+        </div>
+      )}
+
+      {/* HERO */}
+      <section className="hero-bg" style={{ minHeight: "100vh", display: "flex", alignItems: "center", padding: "100px 5% 60px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", gap: "60px" }} className="hero-grid">
+          <div style={{ flex: 1, color: "white" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px", opacity: 0.85 }}>
+              <div style={{ width: 40, height: 1, background: "rgba(255,255,255,0.6)" }}></div>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", letterSpacing: "3px", textTransform: "uppercase" }}>Virar East, Maharashtra</span>
+            </div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(42px, 6vw, 72px)", lineHeight: 1.1, marginBottom: "24px", fontWeight: 400 }}>
+              जीवदानी<br />
+              <em style={{ fontStyle: "italic", color: "#7dd3b8" }}>Clinic</em>
+            </h1>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "18px", lineHeight: 1.7, opacity: 0.85, marginBottom: "16px", maxWidth: 460 }}>
+              Trusted family healthcare since years. Dr. Amol Raut — Family Physician & Surgeon — providing compassionate, expert care when you need it most.
+            </p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", opacity: 0.7, marginBottom: "40px" }}>
+              📍 Shree Bhau Mansion, Jivdani Road, Virar East
+            </p>
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+              <button className="btn-primary" onClick={() => scrollTo("contact")} style={{ padding: "16px 36px", borderRadius: "8px", fontSize: "15px", background: "white", color: "#0a4a3a", fontWeight: 500 }}>
+                📞 Call Now
+              </button>
+              <button onClick={() => scrollTo("services")} style={{ padding: "16px 36px", borderRadius: "8px", fontSize: "15px", background: "transparent", color: "white", border: "2px solid rgba(255,255,255,0.5)", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.2s" }}>
+                Our Services →
+              </button>
+            </div>
+          </div>
+
+          <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: "16px" }}>
+            {[
+              { num: "24h", label: "Wed–Fri Open" },
+              { num: "1 Call", label: "Away — 098226 37731" },
+              { num: "All", label: "Ages Treated" },
+            ].map(({ num, label }) => (
+              <div key={num} style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "12px", padding: "20px 28px", minWidth: 180 }}>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "28px", color: "#7dd3b8", fontWeight: 700 }}>{num}</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.75)", marginTop: "4px" }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ABOUT */}
+      <section id="about" style={{ padding: "100px 5%", background: "#faf8f5" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <FadeIn>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+              <div className="cross-icon">✚</div>
+            </div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 48px)", marginBottom: "20px", color: "#0a4a3a" }}>
+              About Dr. Amol Raut
+            </h2>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "32px" }}>
+              <div className="divider"></div>
+            </div>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "17px", lineHeight: 1.9, color: "#444", maxWidth: 700, margin: "0 auto" }}>
+              Dr. Amol Raut is a dedicated <strong style={{ color: "#0d6b52" }}>Family Physician and Surgeon</strong> based in Virar East. 
+              At Jivdani Clinic, the focus is on providing personalized, affordable, and high-quality healthcare to families across the community. 
+              Whether it's a routine checkup, an infection, or a minor surgical procedure — patients receive attentive and thorough care.
+            </p>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" style={{ padding: "80px 5%", background: "#f0ece5" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <FadeIn>
+            <div style={{ textAlign: "center", marginBottom: "60px" }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px, 4vw, 44px)", color: "#0a4a3a", marginBottom: "12px" }}>Our Services</h2>
+              <div style={{ display: "flex", justifyContent: "center" }}><div className="divider"></div></div>
+            </div>
+          </FadeIn>
+          <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
+            {services.map(({ icon, title, desc }, i) => (
+              <FadeIn key={title} delay={i * 0.08}>
+                <div className="service-card" style={{ borderRadius: "12px", padding: "32px 28px" }}>
+                  <div style={{ fontSize: "36px", marginBottom: "16px" }}>{icon}</div>
+                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", color: "#0a4a3a", marginBottom: "10px" }}>{title}</h3>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "#666", lineHeight: 1.7 }}>{desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOURS + CONTACT */}
+      <section id="hours" style={{ padding: "100px 5%", background: "#faf8f5" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: "48px", flexWrap: "wrap" }} className="hours-contact-grid">
+
+          {/* Hours */}
+          <div style={{ flex: 1, minWidth: 280 }}>
+            <FadeIn>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "36px", color: "#0a4a3a", marginBottom: "8px" }}>Clinic Hours</h2>
+              <div className="divider" style={{ marginBottom: "32px" }}></div>
+              <div style={{ border: "1px solid #e8e3db", borderRadius: "12px", overflow: "hidden", background: "white" }}>
+                {hours.map(({ day, time }) => (
+                  <div key={day} className="hour-row" style={{ display: "flex", justifyContent: "space-between", padding: "14px 20px", fontFamily: "'DM Sans', sans-serif", fontSize: "14px" }}>
+                    <span style={{ fontWeight: 500, color: "#333" }}>{day}</span>
+                    <span style={{ color: time.includes("24") ? "#0d6b52" : "#555", fontWeight: time.includes("24") ? 600 : 400 }}>{time}</span>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Contact */}
+          <div id="contact" style={{ flex: 1, minWidth: 280 }}>
+            <FadeIn delay={0.1}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "36px", color: "#0a4a3a", marginBottom: "8px" }}>Get In Touch</h2>
+              <div className="divider" style={{ marginBottom: "32px" }}></div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                {[
+                  { icon: "📞", label: "Phone", value: "098226 37731", href: "tel:09822637731" },
+                  { icon: "📍", label: "Address", value: "Shree Bhau Mansion, Jivdani Road, Virar East, Vasai-Virar, Maharashtra 401305", href: "https://maps.google.com/?q=Jivdani+Clinic+Virar+East" },
+                ].map(({ icon, label, value, href }) => (
+                  <a key={label} href={href} target="_blank" rel="noreferrer" style={{ textDecoration: "none", background: "white", border: "1px solid #e8e3db", borderRadius: "12px", padding: "20px", display: "flex", gap: "16px", alignItems: "flex-start", transition: "box-shadow 0.2s" }}>
+                    <span style={{ fontSize: "24px" }}>{icon}</span>
+                    <div>
+                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "1.5px", textTransform: "uppercase", color: "#999", marginBottom: "4px" }}>{label}</div>
+                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "15px", color: "#0a4a3a", fontWeight: 500 }}>{value}</div>
+                    </div>
+                  </a>
+                ))}
+
+                <button className="btn-primary" onClick={() => window.open("tel:09822637731")} style={{ padding: "18px", borderRadius: "10px", fontSize: "16px", fontWeight: 500, marginTop: "8px" }}>
+                  📞 Call & Book Appointment
+                </button>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ background: "#0a4a3a", color: "rgba(255,255,255,0.7)", padding: "40px 5%", textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "13px" }}>
+        <div style={{ marginBottom: "8px", color: "white", fontFamily: "'Playfair Display', serif", fontSize: "18px" }}>Jivdani Clinic — जीवदानी क्लिनिक</div>
+        <div>Dr. Amol Raut · Family Physician & Surgeon · Virar East</div>
+        <div style={{ marginTop: "8px", opacity: 0.5 }}>© {new Date().getFullYear()} Jivdani Clinic. All rights reserved.</div>
+      </footer>
+
+    </div>
+  );
+}
