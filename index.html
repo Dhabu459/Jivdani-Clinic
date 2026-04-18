@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Jivdani Clinic — Dr. Amol Raut | Virar East</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green-dark: #0a4a3a;
+    --green-mid: #0d6b52;
+    --green-light: #1a8a6a;
+    --green-soft: #7dd3b8;
+    --cream: #faf8f5;
+    --cream-dark: #f0ece5;
+    --border: #e8e3db;
+    --text: #1a1a1a;
+    --text-muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 68px;
+    transition: all 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(250,248,245,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 12px; }
+  .nav-cross {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: bold;
+    box-shadow: 0 4px 12px rgba(13,107,82,0.3);
+  }
+  .nav-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 15px; line-height: 1.1; }
+  .nav-sub { font-size: 10px; letter-spacing: 0.5px; opacity: 0.7; }
+  nav:not(.scrolled) .nav-name, nav:not(.scrolled) .nav-sub { color: white; }
+  nav.scrolled .nav-name { color: var(--green-dark); }
+  nav.scrolled .nav-sub { color: #666; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    text-decoration: none; font-size: 14px; letter-spacing: 0.4px;
+    text-transform: capitalize; transition: color 0.2s;
+  }
+  nav:not(.scrolled) .nav-links a { color: rgba(255,255,255,0.85); }
+  nav.scrolled .nav-links a { color: #333; }
+  .nav-links a:hover { color: var(--green-light) !important; }
+  .nav-btn {
+    padding: 10px 22px; border-radius: 6px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    background: var(--green-mid); color: white; transition: all 0.2s;
+  }
+  nav:not(.scrolled) .nav-btn { background: white; color: var(--green-dark); }
+  .nav-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; font-size: 22px; }
+  nav:not(.scrolled) .hamburger { color: white; }
+  nav.scrolled .hamburger { color: #333; }
+  .mobile-menu {
+    display: none; position: fixed; top: 68px; left: 0; right: 0;
+    background: white; z-index: 99; padding: 16px 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1); flex-direction: column; gap: 4px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    text-decoration: none; color: #333; font-size: 16px;
+    padding: 12px 0; border-bottom: 1px solid #f0ece5; text-transform: capitalize;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 100px 5% 60px;
+    background: linear-gradient(135deg, #0a4a3a 0%, #0d6b52 40%, #1a8a6a 70%, #0a4a3a 100%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.04) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 40%);
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 60px; position: relative; }
+  .hero-text { flex: 1; color: white; }
+  .hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; opacity: 0.85; }
+  .hero-eyebrow-line { width: 40px; height: 1px; background: rgba(255,255,255,0.5); }
+  .hero-eyebrow span { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(42px, 6vw, 72px); line-height: 1.1; margin-bottom: 24px; font-weight: 400; }
+  .hero-title em { font-style: italic; color: var(--green-soft); }
+  .hero-desc { font-size: 18px; line-height: 1.7; opacity: 0.85; margin-bottom: 12px; max-width: 460px; }
+  .hero-addr { font-size: 14px; opacity: 0.7; margin-bottom: 40px; }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-white {
+    padding: 16px 36px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    background: white; color: var(--green-dark); transition: all 0.2s;
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .btn-ghost {
+    padding: 16px 36px; border-radius: 8px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5);
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: white; }
+  .hero-cards { display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; }
+  .hero-card {
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+    padding: 20px 28px; min-width: 180px; color: white;
+  }
+  .hero-card-num { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green-soft); font-weight: 700; }
+  .hero-card-label { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+  /* SECTIONS */
+  section { padding: 100px 5%; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-center { text-align: center; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); color: var(--green-dark); margin-bottom: 12px; }
+  .divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--green-mid), var(--green-light)); border-radius: 2px; margin: 0 auto 40px; }
+  .divider.left { margin: 0 0 32px; }
+
+  /* ABOUT */
+  .about { background: var(--cream); }
+  .about-icon {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: white;
+    box-shadow: 0 8px 24px rgba(13,107,82,0.3);
+    margin: 0 auto 20px;
+  }
+  .about-desc { font-size: 17px; line-height: 1.9; color: #444; max-width: 700px; margin: 0 auto; }
+  .about-desc strong { color: var(--green-mid); }
+
+  /* SERVICES */
+  .services { background: var(--cream-dark); }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .service-card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px 28px; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(13,107,82,0.12); }
+  .service-icon { font-size: 36px; margin-bottom: 16px; }
+  .service-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--green-dark); margin-bottom: 10px; }
+  .service-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* HOURS + CONTACT */
+  .hours-contact { background: var(--cream); }
+  .hours-contact-grid { display: flex; gap: 48px; flex-wrap: wrap; }
+  .hours-col, .contact-col { flex: 1; min-width: 280px; }
+  .hours-table { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; }
+  .hour-row { display: flex; justify-content: space-between; padding: 14px 20px; font-size: 14px; }
+  .hour-row:nth-child(even) { background: var(--cream-dark); }
+  .hour-day { font-weight: 500; color: #333; }
+  .hour-time { color: #555; }
+  .hour-time.open24 { color: var(--green-mid); font-weight: 600; }
+  .contact-cards { display: flex; flex-direction: column; gap: 16px; }
+  .contact-card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; display: flex; gap: 16px; align-items: flex-start;
+    text-decoration: none; transition: box-shadow 0.2s;
+  }
+  .contact-card:hover { box-shadow: 0 8px 24px rgba(13,107,82,0.1); }
+  .contact-icon { font-size: 24px; }
+  .contact-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+  .contact-value { font-size: 15px; color: var(--green-dark); font-weight: 500; }
+  .btn-call {
+    width: 100%; padding: 18px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500;
+    background: var(--green-mid); color: white; margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .btn-call:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--green-dark); color: rgba(255,255,255,0.7);
+    padding: 40px 5%; text-align: center; font-size: 13px;
+  }
+  footer .footer-name { font-family: 'Playfair Display', serif; font-size: 18px; color: white; margin-bottom: 8px; }
+
+  /* ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero-inner { flex-direction: column; }
+    .hero-cards { flex-direction: row; flex-wrap: wrap; }
+    .hero-card { min-width: 140px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .hours-contact-grid { flex-direction: column; }
+    .nav-links, .nav-btn { display: none; }
+    .hamburger { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-cross">✚</div>
+    <div>
+      <div class="nav-name">Jivdani Clinic</div>
+      <div class="nav-sub">Dr. Amol Raut</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#hours">Hours</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-btn" onclick="window.location='tel:09822637731'">Book Appointment</button>
+  <button class="hamburger" onclick="toggleMenu()">☰</button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#services" onclick="closeMenu()">Services</a>
+  <a href="#hours" onclick="closeMenu()">Hours</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span>Virar East, Maharashtra</span>
+      </div>
+      <h1 class="hero-title">जीवदानी<br><em>Clinic</em></h1>
+      <p class="hero-desc">Trusted family healthcare for all ages. Dr. Amol Raut — Family Physician & Surgeon — providing compassionate, expert care when you need it most.</p>
+      <p class="hero-addr">📍 Shree Bhau Mansion, Jivdani Road, Virar East</p>
+      <div class="hero-btns">
+        <button class="btn-white" onclick="window.location='tel:09822637731'">📞 Call Now</button>
+        <button class="btn-ghost" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Our Services →</button>
+      </div>
+    </div>
+    <div class="hero-cards">
+      <div class="hero-card"><div class="hero-card-num">24h</div><div class="hero-card-label">Wed–Fri Open</div></div>
+      <div class="hero-card"><div class="hero-card-num">1 Call</div><div class="hero-card-label">Away — 098226 37731</div></div>
+      <div class="hero-card"><div class="hero-card-num">All</div><div class="hero-card-label">Ages Treated</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-inner section-center">
+    <div class="fade-up">
+      <div class="about-icon">✚</div>
+      <h2 class="section-title">About Dr. Amol Raut</h2>
+      <div class="divider"></div>
+      <p class="about-desc">Dr. Amol Raut is a dedicated <strong>Family Physician and Surgeon</strong> based in Virar East. At Jivdani Clinic, the focus is on providing personalized, affordable, and high-quality healthcare to families across the community. Whether it's a routine checkup, an infection, or a minor surgical procedure — patients receive attentive and thorough care.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-inner">
+    <div class="fade-up section-center" style="margin-bottom:60px">
+      <h2 class="section-title">Our Services</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-up"><div class="service-icon">🩺</div><h3 class="service-title">General Consultations</h3><p class="service-desc">Complete family healthcare for all ages — from infants to elderly.</p></div>
+      <div class="service-card fade-up" style="transition-delay:0.08s"><div class="service-icon">🔬</div><h3 class="service-title">Diagnosis & Treatment</h3><p class="service-desc">Accurate diagnosis using clinical expertise and timely treatment plans.</p></div>
+      <div class="service-card fade-up" style="transition-delay:0.16s"><div class="service-icon">💉</div><h3 class="service-title">Minor Surgeries</h3><p class="service-desc">Safe, minor surgical procedures by an experienced surgeon.</p></div>
+      <div class="service-card fade-up" style="transition-delay:0.24s"><div class="service-icon">🤒</div><h3 class="service-title">Fever & Infections</h3><p class="service-desc">Quick relief from viral, bacterial infections, and seasonal illnesses.</p></div>
+      <div class="service-card fade-up" style="transition-delay:0.32s"><div class="service-icon">🫁</div><h3 class="service-title">Chronic Disease Care</h3><p class="service-desc">Management of diabetes, hypertension, and other chronic conditions.</p></div>
+      <div class="service-card fade-up" style="transition-delay:0.40s"><div class="service-icon">🚑</div><h3 class="service-title">Emergency Visits</h3><p class="service-desc">Available around the clock on select days for urgent medical needs.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOURS + CONTACT -->
+<section class="hours-contact" id="hours">
+  <div class="section-inner">
+    <div class="hours-contact-grid">
+      <!-- Hours -->
+      <div class="hours-col fade-up">
+        <h2 class="section-title">Clinic Hours</h2>
+        <div class="divider left"></div>
+        <div class="hours-table">
+          <div class="hour-row"><span class="hour-day">Monday</span><span class="hour-time">08:30 AM – 10:00 PM</span></div>
+          <div class="hour-row"><span class="hour-day">Tuesday</span><span class="hour-time">10:00 AM – 12:00 AM</span></div>
+          <div class="hour-row"><span class="hour-day">Wednesday</span><span class="hour-time open24">Open 24 Hours</span></div>
+          <div class="hour-row"><span class="hour-day">Thursday</span><span class="hour-time open24">Open 24 Hours</span></div>
+          <div class="hour-row"><span class="hour-day">Friday</span><span class="hour-time open24">Open 24 Hours</span></div>
+          <div class="hour-row"><span class="hour-day">Saturday</span><span class="hour-time">12:00 AM – 10:00 AM</span></div>
+          <div class="hour-row"><span class="hour-day">Sunday</span><span class="hour-time">12:00 PM – 10:00 AM</span></div>
+        </div>
+      </div>
+      <!-- Contact -->
+      <div class="contact-col fade-up" id="contact" style="transition-delay:0.1s">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="divider left"></div>
+        <div class="contact-cards">
+          <a class="contact-card" href="tel:09822637731">
+            <span class="contact-icon">📞</span>
+            <div><div class="contact-label">Phone</div><div class="contact-value">098226 37731</div></div>
+          </a>
+          <a class="contact-card" href="https://maps.google.com/?q=Jivdani+Clinic+Virar+East" target="_blank">
+            <span class="contact-icon">📍</span>
+            <div><div class="contact-label">Address</div><div class="contact-value">Shree Bhau Mansion, Jivdani Road,<br>Virar East, Maharashtra 401305</div></div>
+          </a>
+          <button class="btn-call" onclick="window.location='tel:09822637731'">📞 Call & Book Appointment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name">Jivdani Clinic — जीवदानी क्लिनिक</div>
+  <div>Dr. Amol Raut · Family Physician & Surgeon · Virar East</div>
+  <div style="margin-top:8px;opacity:0.5;">© 2026 Jivdani Clinic. All rights reserved.</div>
+</footer>
+
+<script>
+  // Navbar scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  // Fade in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
